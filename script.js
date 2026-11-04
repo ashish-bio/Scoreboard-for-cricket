@@ -4,14 +4,16 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebas
 import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "PASTE_YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "PASTE_YOUR_DATABASE_URL",
-  projectId: "PASTE_YOUR_PROJECT_ID",
-  storageBucket: "PASTE_YOUR_PROJECT_ID.firebasestorage.app",
-  messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
-  appId: "PASTE_YOUR_APP_ID"
+  apiKey: "AIzaSyBSEgM3lh0bPyJdcBin1trKnmC0ntWOf4Q",
+  authDomain: "gpk-cricket.firebaseapp.com",
+  databaseURL: "https://gpk-cricket-default-rtdb.firebaseio.com",
+  projectId: "gpk-cricket",
+  storageBucket: "gpk-cricket.firebasestorage.app",
+  messagingSenderId: "1095579929817",
+  appId: "1:1095579929817:web:b957ac1eba24a5331f42c8",
+  measurementId: "G-57YZ1SX6QL"
 };
 
 const $ = (id) => document.getElementById(id);
