@@ -32,8 +32,8 @@ let snapshots = [];
 let toastTimer, nameSaveTimer;
 
 function firebaseConfigured() {
-  return firebaseConfig.apiKey !== "PASTE_YOUR_API_KEY" &&
-         firebaseConfig.databaseURL !== "PASTE_YOUR_DATABASE_URL";
+  return firebaseConfig.apiKey !== "AIzaSyBSEgM3lh0bPyJdcBin1trKnmC0ntWOf4Q" &&
+         firebaseConfig.databaseURL !== "https://gpk-cricket-default-rtdb.firebaseio.com";
 }
 function showToast(message) {
   const toast = $("toast");
