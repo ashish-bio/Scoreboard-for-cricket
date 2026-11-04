@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kishanganj Polytechnic Scorecard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <div class="head">
+    <div>
+      <div class="eyebrow">College cricket match</div>
+      <h1 id="title"></h1>
+      <p class="sub" id="sub"></p>
+    </div>
+    <button type="button" class="btn" id="editBtn" hidden>Edit scorecard</button>
+  </div>
+  <div class="sample" id="sample" hidden></div>
+  <section class="panel editor" id="editor" hidden></section>
+  <div class="result" id="result"></div>
+  <section class="tiles" id="tiles"></section>
+  <section class="panel"><h2>Match highlights</h2><dl class="hl" id="hl"></dl></section>
+  <section class="panel" id="chartPanel">
+    <h2>Run progression</h2>
+    <div class="legend" id="legend"></div>
+    <div id="chartWrap"></div>
+  </section>
+  <div id="innings" style="display:flex;flex-direction:column;gap:18px"></div>
+  <p class="foot">Unofficial page made by students to record a college match. It is not run by the college.</p>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
