@@ -4,7 +4,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebas
 import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBSEgM3lh0bPyJdcBin1trKnmC0ntWOf4Q",
   authDomain: "gpk-cricket.firebaseapp.com",
@@ -12,8 +11,7 @@ const firebaseConfig = {
   projectId: "gpk-cricket",
   storageBucket: "gpk-cricket.firebasestorage.app",
   messagingSenderId: "1095579929817",
-  appId: "1:1095579929817:web:b957ac1eba24a5331f42c8",
-  measurementId: "G-57YZ1SX6QL"
+  appId: "1:1095579929817:web:b957ac1eba24a5331f42c8"
 };
 
 const $ = (id) => document.getElementById(id);
@@ -32,8 +30,8 @@ let snapshots = [];
 let toastTimer, nameSaveTimer;
 
 function firebaseConfigured() {
-  return firebaseConfig.apiKey !== "AIzaSyBSEgM3lh0bPyJdcBin1trKnmC0ntWOf4Q" &&
-         firebaseConfig.databaseURL !== "https://gpk-cricket-default-rtdb.firebaseio.com";
+  return firebaseConfig.apiKey !== "PASTE_YOUR_API_KEY" &&
+         firebaseConfig.databaseURL !== "PASTE_YOUR_DATABASE_URL";
 }
 function showToast(message) {
   const toast = $("toast");
