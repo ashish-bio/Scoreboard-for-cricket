@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07111f" />
+  <title>GPK Cricket Live Scoreboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Government Polytechnic Kishanganj home">
+      <span class="brand-mark">GPK<span>•</span></span>
+      <span class="brand-copy"><strong>GOVERNMENT POLYTECHNIC</strong><small>KISHANGANJ · CRICKET</small></span>
+    </a>
+    <div class="header-actions">
+      <div class="live-pill"><span class="live-dot"></span> LIVE SCOREBOARD</div>
+      <button id="authBtn" class="auth-btn">SCORER LOGIN</button>
+      <span id="connectionStatus" class="connection-status">CONNECTING…</span>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <section class="intro">
+      <div class="eyebrow"><span></span> COLLEGE CRICKET CENTRAL</div>
+      <h1>THE GAME IS <em>ON.</em></h1>
+      <p>Your match. Your scoreboard. Update every ball in real time.</p>
+    </section>
+
+    <section class="scoreboard card">
+      <div class="scoreboard-head">
+        <div>
+          <div class="match-label">MATCH SCORECARD <span class="live-tag">LIVE</span></div>
+          <div class="match-subtitle">GOVERNMENT POLYTECHNIC KISHANGANJ</div>
+        </div>
+        <div class="head-right">
+          <label class="overs-setting" for="maxOvers">MATCH OVERS <input id="maxOvers" type="number" min="1" max="50" step="1" value="20" inputmode="numeric" aria-label="Total overs in the match"></label>
+          <div class="innings-chip"><span class="innings-icon">◆</span> <span id="inningsLabel">INNINGS 1</span></div>
+        </div>
+      </div>
+
+      <div class="teams-row">
+        <div class="team-block">
+          <label for="teamName">BATTING TEAM</label>
+          <input id="teamName" class="team-name-input" maxlength="28" value="TEAM A" aria-label="Batting team name">
+          <div class="batting-indicator"><span></span> BATTING NOW</div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="team-block opponent">
+          <label for="opponentName">OPPONENT</label>
+          <input id="opponentName" class="team-name-input" maxlength="28" value="TEAM B" aria-label="Opponent team name">
+          <div class="opponent-note">GOVERNMENT POLYTECHNIC KISHANGANJ</div>
+        </div>
+      </div>
+
+      <div class="score-main">
+        <div class="score-caption">TOTAL RUNS</div>
+        <div class="score-line"><span id="runs">0</span><span class="wicket-divider">/</span><span id="wickets">0</span></div>
+        <div class="score-meta">
+          <span><b id="overs">0.0</b> <small>OVERS</small></span>
+          <i></i>
+          <span><b id="runRate">0.00</b> <small>RUN RATE</small></span>
+          <i></i>
+          <span><b id="extras">0</b> <small>EXTRAS</small></span>
+        </div>
+      </div>
+
+      <div id="inningsInfo" class="innings-info" hidden></div>
+
+      <div class="over-strip">
+        <div class="over-title">THIS OVER</div>
+        <div id="thisOver" class="ball-list"><span class="empty-ball">—</span></div>
+        <div class="over-count"><span id="legalBalls">0</span>/6 BALLS</div>
+      </div>
+    </section>
+
+    <section class="controls-grid">
+      <div class="card scoring-card">
+        <div class="section-heading">
+          <div><span class="section-kicker">QUICK ACTIONS</span><h2>Update the score</h2></div>
+          <span class="step-number">01 / SCORE</span>
+        </div>
+        <p class="helper">Tap the result of each delivery. The scoreboard updates instantly.</p>
+
+        <div class="run-buttons">
+          <button class="run-btn dot-btn" data-action="0"><span>•</span><small>DOT</small></button>
+          <button class="run-btn" data-action="1">1</button>
+          <button class="run-btn" data-action="2">2</button>
+          <button class="run-btn" data-action="3">3</button>
+          <button class="run-btn boundary" data-action="4">4<small>FOUR</small></button>
+          <button class="run-btn" data-action="5">5</button>
+          <button class="run-btn boundary six" data-action="6">6<small>SIX</small></button>
+        </div>
+
+        <div class="section-divider"><span>EXTRAS & WICKET</span></div>
+        <div class="extras-buttons">
+          <button class="action-btn wicket-btn" data-action="W"><span class="action-icon">✕</span><span><b>WICKET</b><small>OUT</small></span></button>
+          <button class="action-btn" data-action="WD"><span class="action-icon">＋</span><span><b>WIDE</b><small>+1 EXTRA</small></span></button>
+          <button class="action-btn" data-action="NB"><span class="action-icon">＋</span><span><b>NO BALL</b><small>+1 EXTRA</small></span></button>
+          <button class="action-btn" data-action="B"><span class="action-icon">↗</span><span><b>BYE</b><small>+1 RUN</small></span></button>
+          <button class="action-btn" data-action="LB"><span class="action-icon">↗</span><span><b>LEG BYE</b><small>+1 RUN</small></span></button>
+        </div>
+
+        <div class="utility-row">
+          <button id="inningsBtn" class="utility-btn innings-btn">⇄ &nbsp;END INNINGS · SWITCH TEAMS</button>
+        </div>
+        <div class="utility-row">
+          <button id="undoBtn" class="utility-btn">↶ &nbsp;UNDO LAST BALL</button>
+          <button id="resetBtn" class="utility-btn reset">↻ &nbsp;RESET INNINGS</button>
+        </div>
+      </div>
+
+      <aside class="card match-info">
+        <div class="section-heading">
+          <div><span class="section-kicker">MATCH CENTRE</span><h2>At a glance</h2></div>
+          <span class="info-icon">✦</span>
+        </div>
+        <div class="info-stat">
+          <span class="info-label">CURRENT RUN RATE</span>
+          <strong id="sideRunRate">0.00</strong>
+          <div class="mini-track"><span id="rateBar"></span></div>
+        </div>
+        <div class="info-stat">
+          <span class="info-label">WICKETS IN HAND</span>
+          <strong><span id="wicketsLeft">10</span><small> / 10</small></strong>
+          <div id="wicketDots" class="wicket-dots"></div>
+        </div>
+        <div class="info-stat last-stat">
+          <span class="info-label">TOTAL EXTRAS</span>
+          <strong id="sideExtras">0</strong>
+          <p>Wides · No balls · Byes · Leg byes</p>
+        </div>
+        <div class="college-stamp"><span>GPK</span><div><b>PLAY WITH PRIDE.</b><small>GOVERNMENT POLYTECHNIC KISHANGANJ</small></div></div>
+      </aside>
+    </section>
+
+    <section class="card history-card">
+      <div class="section-heading">
+        <div><span class="section-kicker">BALL-BY-BALL</span><h2>Recent deliveries</h2></div>
+        <span class="step-number">LIVE FEED</span>
+      </div>
+      <div id="history" class="history-list"><div class="history-empty">No deliveries yet. Start scoring to see the ball-by-ball feed.</div></div>
+    </section>
+
+    <footer><span>GPK CRICKET</span><i>•</i> MADE FOR THE SPIRIT OF THE GAME <i>•</i> GOVERNMENT POLYTECHNIC KISHANGANJ</footer>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div class="viewer-note">PUBLIC LIVE VIEW · Only the signed-in scorer can change the score.</div>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
