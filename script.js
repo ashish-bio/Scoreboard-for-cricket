@@ -11,7 +11,8 @@ const firebaseConfig = {
   projectId: "gpk-cricket",
   storageBucket: "gpk-cricket.firebasestorage.app",
   messagingSenderId: "1095579929817",
-  appId: "1:1095579929817:web:b957ac1eba24a5331f42c8"
+  appId: "1:1095579929817:web:b957ac1eba24a5331f42c8",
+  measurementId: "G-57YZ1SX6QL"
 };
 
 const $ = (id) => document.getElementById(id);
@@ -24,7 +25,8 @@ let state = {
   runs: 0, wickets: 0, legalBalls: 0, extras: 0,
   balls: [], history: [],
   teamName: "TEAM A", opponentName: "TEAM B",
-  innings: 1, firstInnings: null, maxOvers: 20
+  innings: 1, firstInnings: null, maxOvers: 20,
+  batsmen: ["BATSMAN 1", "BATSMAN 2"], strike: 0, bowler: "BOWLER"
 };
 let snapshots = [];
 let toastTimer, nameSaveTimer;
@@ -45,7 +47,7 @@ function setConnection(text, online=false) {
   statusEl.classList.toggle("online", online);
 }
 function updateAccess() {
-  document.querySelectorAll("[data-action], #undoBtn, #resetBtn, #inningsBtn, #maxOvers, #teamName, #opponentName")
+  document.querySelectorAll("[data-action], #undoBtn, #resetBtn, #inningsBtn, #maxOvers, #teamName, #opponentName, #bat0, #bat1, #bowlerName, #swapStrikeBtn")
     .forEach(el => {
       el.disabled = !isScorer;
       el.style.opacity = isScorer ? "1" : ".62";
@@ -61,6 +63,7 @@ function saveCloud() {
     teamName: state.teamName, opponentName: state.opponentName,
     innings: state.innings, firstInnings: state.firstInnings || null,
     maxOvers: state.maxOvers,
+    batsmen: state.batsmen, strike: state.strike, bowler: state.bowler,
     updatedAt: Date.now()
   };
   set(ref(db, scorePath), payload).catch(err => {
@@ -94,7 +97,12 @@ function startFirebase() {
           opponentName: data.opponentName || "TEAM B",
           innings: Number(data.innings || 1),
           firstInnings: data.firstInnings || null,
-          maxOvers: Number(data.maxOvers || 20)
+          maxOvers: Number(data.maxOvers || 20),
+          batsmen: Array.isArray(data.batsmen)
+            ? [data.batsmen[0] ?? "BATSMAN 1", data.batsmen[1] ?? "BATSMAN 2"]
+            : ["BATSMAN 1", "BATSMAN 2"],
+          strike: Number(data.strike || 0) === 1 ? 1 : 0,
+          bowler: data.bowler ?? "BOWLER"
         };
         snapshots = [];
         $("teamName").value = state.teamName;
@@ -151,8 +159,18 @@ function snapshot() {
   snapshots.push({
     runs: state.runs, wickets: state.wickets, legalBalls: state.legalBalls,
     extras: state.extras, balls: [...state.balls], history: [...state.history],
-    teamName: state.teamName, opponentName: state.opponentName
+    teamName: state.teamName, opponentName: state.opponentName,
+    batsmen: [...state.batsmen], strike: state.strike, bowler: state.bowler
   });
+}
+function resetPlayers() {
+  state.batsmen = ["BATSMAN 1", "BATSMAN 2"];
+  state.strike = 0;
+  state.bowler = "BOWLER";
+}
+function askName(message, current = "") {
+  const answer = prompt(message, current);
+  return answer === null ? null : answer.trim().toUpperCase();
 }
 function addDelivery(action) {
   if (!isScorer) return showToast("Only the scorer can update the match.");
@@ -176,6 +194,12 @@ function addDelivery(action) {
   state.runs += total;
   state.extras += extra;
   if (legal) state.legalBalls += 1;
+  const wicketIndex = action === "W" ? state.strike : -1;
+  if (wicketIndex >= 0) state.batsmen[wicketIndex] = "";
+  const oddRuns = typeof action === "number" ? action % 2 === 1 : (action === "B" || action === "LB");
+  if (oddRuns) state.strike = 1 - state.strike;
+  const overDone = legal && state.legalBalls % 6 === 0;
+  if (overDone) state.strike = 1 - state.strike;
   const overBefore = Math.floor((state.legalBalls - (legal ? 1 : 0)) / 6);
   const ballNumber = legal ? ((state.legalBalls - 1) % 6) + 1 : (state.legalBalls % 6);
   const entry = { action: label, description, total, extra, legal, over: overBefore, ball: ballNumber, score: `${state.runs}/${state.wickets}` };
@@ -184,6 +208,23 @@ function addDelivery(action) {
   render();
   saveCloud();
   showToast(description + (total ? ` · +${total}` : ""));
+  const matchContinues = state.wickets < 10 && state.legalBalls < state.maxOvers * 6 &&
+    !(state.innings >= 2 && state.firstInnings && state.runs > state.firstInnings.runs);
+  if ((wicketIndex >= 0 && state.wickets < 10) || (overDone && matchContinues)) {
+    setTimeout(() => {
+      let changed = false;
+      if (wicketIndex >= 0 && state.wickets < 10) {
+        const name = askName("Wicket! Enter the NEW BATSMAN's name:");
+        state.batsmen[wicketIndex] = name || "NEW BATSMAN";
+        changed = true;
+      }
+      if (overDone && matchContinues) {
+        const name = askName("Over complete. Enter the next BOWLER's name:", state.bowler);
+        if (name) { state.bowler = name; changed = true; }
+      }
+      if (changed) { render(); saveCloud(); }
+    }, 60);
+  }
 }
 function undo() {
   if (!isScorer) return showToast("Only the scorer can undo.");
@@ -197,6 +238,7 @@ function reset() {
   if (state.history.length && !confirm("Reset this innings for everyone watching?")) return;
   state.runs = 0; state.wickets = 0; state.legalBalls = 0; state.extras = 0;
   state.balls = []; state.history = []; snapshots = [];
+  resetPlayers();
   render(); saveCloud(); showToast("Innings reset for all viewers.");
 }
 function endInnings() {
@@ -206,6 +248,7 @@ function endInnings() {
     state.innings = 1; state.firstInnings = null;
     state.runs = 0; state.wickets = 0; state.legalBalls = 0; state.extras = 0;
     state.balls = []; state.history = []; snapshots = [];
+    resetPlayers();
     render(); saveCloud(); showToast("New match started.");
     return;
   }
@@ -220,6 +263,7 @@ function endInnings() {
   state.innings = 2;
   state.runs = 0; state.wickets = 0; state.legalBalls = 0; state.extras = 0;
   state.balls = []; state.history = []; snapshots = [];
+  resetPlayers();
   render(); saveCloud();
   showToast(`Innings 2 · ${state.teamName} to bat`);
 }
@@ -267,6 +311,12 @@ function render() {
   } else {
     info.hidden = true;
   }
+  [0, 1].forEach(i => {
+    const input = $(`bat${i}`);
+    if (document.activeElement !== input) input.value = state.batsmen[i] || "";
+    $(`bat${i}Cell`).classList.toggle("on-strike", state.strike === i);
+  });
+  if (document.activeElement !== $("bowlerName")) $("bowlerName").value = state.bowler || "";
   const dots = $("wicketDots");
   dots.innerHTML = "";
   for (let i = 0; i < 10; i++) {
@@ -298,6 +348,29 @@ document.querySelectorAll("[data-action]").forEach(button => {
 $("undoBtn").addEventListener("click", undo);
 $("resetBtn").addEventListener("click", reset);
 $("inningsBtn").addEventListener("click", endInnings);
+$("swapStrikeBtn").addEventListener("click", () => {
+  if (!isScorer) return showToast("Only the scorer can swap strike.");
+  state.strike = 1 - state.strike;
+  render(); saveCloud();
+});
+let playerSaveTimer;
+function queuePlayerSave() {
+  if (!isScorer || isApplyingRemote) return;
+  clearTimeout(playerSaveTimer);
+  playerSaveTimer = setTimeout(saveCloud, 350);
+}
+[0, 1].forEach(i => {
+  $(`bat${i}`).addEventListener("input", event => {
+    state.batsmen[i] = event.target.value.toUpperCase();
+    event.target.value = state.batsmen[i];
+    queuePlayerSave();
+  });
+});
+$("bowlerName").addEventListener("input", event => {
+  state.bowler = event.target.value.toUpperCase();
+  event.target.value = state.bowler;
+  queuePlayerSave();
+});
 $("maxOvers").addEventListener("change", event => {
   if (!isScorer) return;
   let n = Math.round(Number(event.target.value));
