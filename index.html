@@ -71,6 +71,22 @@
         </div>
       </div>
 
+      <div class="players-strip">
+        <div id="bat0Cell" class="player-cell">
+          <label for="bat0">BATSMAN <span class="strike-tag">● ON STRIKE</span></label>
+          <input id="bat0" maxlength="24" placeholder="ENTER NAME" aria-label="Batsman 1 name">
+        </div>
+        <div id="bat1Cell" class="player-cell">
+          <label for="bat1">BATSMAN <span class="strike-tag">● ON STRIKE</span></label>
+          <input id="bat1" maxlength="24" placeholder="ENTER NAME" aria-label="Batsman 2 name">
+        </div>
+        <div class="player-cell bowler-cell">
+          <label for="bowlerName">BOWLER</label>
+          <input id="bowlerName" maxlength="24" placeholder="ENTER NAME" aria-label="Bowler name">
+        </div>
+        <button id="swapStrikeBtn" class="swap-btn" title="Swap strike (run out, correction)">⇄ STRIKE</button>
+      </div>
+
       <div id="inningsInfo" class="innings-info" hidden></div>
 
       <div class="over-strip">
@@ -148,7 +164,7 @@
       <div id="history" class="history-list"><div class="history-empty">No deliveries yet. Start scoring to see the ball-by-ball feed.</div></div>
     </section>
 
-    <footer><span>GPK CRICKET</span><i>•</i> MADE BY ASHISH RANJAN <i>•</i> GOVERNMENT POLYTECHNIC KISHANGANJ</footer>
+    <footer><span>GPK CRICKET</span><i>•</i> MADE FOR THE SPIRIT OF THE GAME <i>•</i> GOVERNMENT POLYTECHNIC KISHANGANJ</footer>
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
